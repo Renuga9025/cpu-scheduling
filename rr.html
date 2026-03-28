@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Round Robin</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header><h1>CPU Scheduling Simulator</h1></header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="fcfs.html">FCFS</a>
+<a href="sjf.html">SJF</a>
+<a href="priority.html">Priority</a>
+<a href="rr.html">Round Robin</a>
+</nav>
+
+<div class="container">
+
+<h2>Round Robin</h2>
+
+<input type="number" id="n" placeholder="Processes">
+<input type="number" id="q" placeholder="Time Quantum">
+
+<button onclick="createInputs()">Create Inputs</button>
+
+<div id="inputs"></div>
+
+<button onclick="runRR()">Calculate</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+function createInputs(){
+    let n=document.getElementById("n").value;
+    let html="";
+    for(let i=0;i<n;i++){
+        html+=`
+        <h4>P${i+1}</h4>
+        AT:<input id="at${i}">
+        BT:<input id="bt${i}"><br>`;
+    }
+    document.getElementById("inputs").innerHTML=html;
+}
+
+function runRR(){
+    let n=document.getElementById("n").value;
+    let q=document.getElementById("q").value;
+
+    let p=[];
+    let rem={};
+
+    for(let i=0;i<n;i++){
+        let at=+document.getElementById("at"+i).value;
+        let bt=+document.getElementById("bt"+i).value;
+
+        p.push({id:"P"+(i+1), at, bt});
+        rem["P"+(i+1)] = bt;
+    }
+
+    let time=0;
+    let queue=[...p];
+
+    while(queue.length){
+        let cur=queue.shift();
+
+        if(rem[cur.id]>q){
+            time+=q;
+            rem[cur.id]-=q;
+            queue.push(cur);
+        } else {
+            time+=rem[cur.id];
+            cur.tat=time-cur.at;
+            cur.wt=cur.tat-cur.bt;
+            rem[cur.id]=0;
+        }
+    }
+
+    let table="<table><tr><th>P</th><th>AT</th><th>BT</th><th>WT</th><th>TAT</th></tr>";
+    p.forEach(proc=>{
+        table+=`<tr>
+        <td>${proc.id}</td>
+        <td>${proc.at}</td>
+        <td>${proc.bt}</td>
+        <td>${proc.wt}</td>
+        <td>${proc.tat}</td>
+        </tr>`;
+    });
+
+    table+="</table>";
+    document.getElementById("output").innerHTML=table;
+}
+</script>
+
+</body>
+</html>

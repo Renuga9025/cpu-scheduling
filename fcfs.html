@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FCFS</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/script.js"></script>
+</head>
+<body>
+
+<header>
+<h1>CPU Scheduling Simulator</h1>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="fcfs.html">FCFS</a>
+<a href="sjf.html">SJF</a>
+<a href="priority.html">Priority</a>
+<a href="rr.html">Round Robin</a>
+</nav>
+
+<div class="container">
+
+<h2>First Come First Serve</h2>
+
+<label>No of Processes:</label>
+<input type="number" id="n">
+
+<button onclick="createInputs()">Create Inputs</button>
+
+<div id="inputs"></div>
+
+<button onclick="runFCFS()">Calculate</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+
+function createInputs(){
+    let n = document.getElementById("n").value;
+    let html = "";
+
+    for(let i=0;i<n;i++){
+        html += `
+        <h4>Process P${i+1}</h4>
+        Arrival Time: <input type="number" id="at${i}">
+        Burst Time: <input type="number" id="bt${i}">
+        <br>`;
+    }
+
+    document.getElementById("inputs").innerHTML = html;
+}
+
+function runFCFS(){
+    let n = document.getElementById("n").value;
+    let p = [];
+
+    for(let i=0;i<n;i++){
+        let at = +document.getElementById("at"+i).value;
+        let bt = +document.getElementById("bt"+i).value;
+
+        p.push({id:"P"+(i+1), at, bt});
+    }
+
+    p.sort((a,b)=>a.at-b.at);
+
+    let time=0;
+
+    p.forEach(proc=>{
+        if(time < proc.at) time = proc.at;
+
+        proc.wt = time - proc.at;
+        time += proc.bt;
+        proc.tat = proc.wt + proc.bt;
+    });
+
+    let table = "<table><tr><th>P</th><th>AT</th><th>BT</th><th>WT</th><th>TAT</th></tr>";
+
+    p.forEach(proc=>{
+        table += `<tr>
+        <td>${proc.id}</td>
+        <td>${proc.at}</td>
+        <td>${proc.bt}</td>
+        <td>${proc.wt}</td>
+        <td>${proc.tat}</td>
+        </tr>`;
+    });
+
+    table += "</table>";
+
+    document.getElementById("output").innerHTML = table;
+}
+
+</script>
+
+</body>
+</html>

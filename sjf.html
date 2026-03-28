@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SJF</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header><h1>CPU Scheduling Simulator</h1></header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="fcfs.html">FCFS</a>
+<a href="sjf.html">SJF</a>
+<a href="priority.html">Priority</a>
+<a href="rr.html">Round Robin</a>
+</nav>
+
+<div class="container">
+
+<h2>Shortest Job First</h2>
+
+<input type="number" id="n" placeholder="Processes">
+<button onclick="createInputs()">Create Inputs</button>
+
+<div id="inputs"></div>
+
+<button onclick="runSJF()">Calculate</button>
+
+<div id="output"></div>
+
+</div>
+
+<script>
+function createInputs(){
+    let n = document.getElementById("n").value;
+    let html="";
+    for(let i=0;i<n;i++){
+        html += `
+        <h4>P${i+1}</h4>
+        AT: <input id="at${i}">
+        BT: <input id="bt${i}"><br>`;
+    }
+    document.getElementById("inputs").innerHTML=html;
+}
+
+function runSJF(){
+    let n = document.getElementById("n").value;
+    let p=[];
+
+    for(let i=0;i<n;i++){
+        p.push({
+            id:"P"+(i+1),
+            at:+document.getElementById("at"+i).value,
+            bt:+document.getElementById("bt"+i).value
+        });
+    }
+
+    p.sort((a,b)=>a.bt-b.bt);
+
+    let time=0;
+
+    p.forEach(proc=>{
+        proc.wt=time;
+        time+=proc.bt;
+        proc.tat=proc.wt+proc.bt;
+    });
+
+    display(p);
+}
+
+function display(p){
+    let table="<table><tr><th>P</th><th>AT</th><th>BT</th><th>WT</th><th>TAT</th></tr>";
+    p.forEach(proc=>{
+        table+=`<tr>
+        <td>${proc.id}</td>
+        <td>${proc.at}</td>
+        <td>${proc.bt}</td>
+        <td>${proc.wt}</td>
+        <td>${proc.tat}</td>
+        </tr>`;
+    });
+    table+="</table>";
+    document.getElementById("output").innerHTML=table;
+}
+</script>
+
+</body>
+</html>
